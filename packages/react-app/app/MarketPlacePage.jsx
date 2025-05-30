@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 
-function MarketplacePage({ walletConnected }) {
+function MarketplacePage({ walletConnected}) {
   const [listings, setListings] = useState([
     { id: 1, type: 'NFT', item: 'Forest Reforestation NFT #004', price: '100 cUSD', status: 'Available' },
     { id: 2, type: 'Token', item: '500 CC Tokens', price: '50 cUSD', status: 'Available' },
