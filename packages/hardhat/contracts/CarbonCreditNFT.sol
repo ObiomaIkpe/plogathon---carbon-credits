@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.28;
 
-import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
+import "@openzeppelin/contracts@5.0.2/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts@5.0.2/access/AccessControl.sol";
 
 /// @title CarbonCreditNFT
+/// @author Therock Ani
 /// @notice Manages unique carbon credits as ERC-721 NFTs, with metadata and CO2 tracking.
 /// @dev Extends ERC721URIStorage for token URI storage and AccessControl for role-based permissions.
 contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
@@ -69,7 +70,7 @@ contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
     /// @dev Only callable by the NFT owner or approved address. Emits CreditBurned event.
     /// @param tokenId The ID of the NFT to burn.
     function burn(uint256 tokenId) public {
-        if (!_isAuthorized(msg.sender, tokenId)) revert NotOwnerOrApproved();
+        if (!_isAuthorized(ownerOf(tokenId), msg.sender, tokenId)) revert NotOwnerOrApproved();
         _burn(tokenId);
         emit CreditBurned(tokenId, msg.sender);
     }
@@ -90,10 +91,11 @@ contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
         _revokeRole(MINTER_ROLE, account);
     }
 
-    /// @notice Overrides supportsInterface to handle ERC-721 and AccessControl interfaces.
+    /// @notice Overrides supportsInterface to handle ERC721URIStorage and AccessControl interfaces.
+    /// @dev Includes ERC721URIStorage to support IERC4906 (Metadata Update).
     /// @param interfaceId The interface ID to check.
     /// @return True if the interface is supported, false otherwise.
-    function supportsInterface(bytes4 interfaceId) public view override(ERC721, AccessControl) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view override(ERC721URIStorage, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
     }
 }
