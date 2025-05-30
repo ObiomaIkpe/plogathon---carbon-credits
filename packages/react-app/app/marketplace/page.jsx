@@ -2,7 +2,8 @@
 
 import React, { useState } from 'react';
 
-export default function MarketplacePage({ walletConnected }) {
+export default function MarketplacePage() {
+  const walletConnected = true; 
   const [listings, setListings] = useState([
     { id: 1, type: 'NFT', item: 'Forest Reforestation NFT #004', price: '100 cUSD', status: 'Available' },
     { id: 2, type: 'Token', item: '500 CC Tokens', price: '50 cUSD', status: 'Available' },
