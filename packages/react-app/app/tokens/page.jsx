@@ -28,7 +28,7 @@ export default function TokensPage({ walletConnected }) {
 
   return (
     <section className="py-12 px-4 bg-white rounded-xl shadow-lg my-8 mx-auto max-w-4xl">
-      <h3 className="text-4xl font-bold text-center text-green-700 mb-8">Carbon Credit Tokens (ERC-20)</h3> [cite: 4]
+      <h3 className="text-4xl font-bold text-center text-green-700 mb-8">Carbon Credit Tokens (ERC-20)</h3> 
       {walletConnected ? (
         <div className="text-center">
           <p className="text-2xl text-green-800 font-semibold mb-6">
@@ -38,7 +38,7 @@ export default function TokensPage({ walletConnected }) {
           <div className="bg-green-50 p-6 rounded-lg shadow-md mb-8">
             <h4 className="text-2xl font-semibold text-green-800 mb-4">Convert NFT to Tokens</h4>
             <p className="text-gray-600 mb-4">
-              Burn your project-specific NFTs to receive standardized ERC-20 tokens. [cite: 4]
+              Burn your project-specific NFTs to receive standardized ERC-20 tokens. 
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <input

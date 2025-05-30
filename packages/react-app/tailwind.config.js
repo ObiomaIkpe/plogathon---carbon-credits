@@ -28,6 +28,9 @@ module.exports = {
         lotus: "#FFA3EB",
         lavender: "#B490FF",
       },
+      fontFamily: {
+        inter: ['Inter', 'sans-serif']
+      }
     },
   },
   plugins: [],

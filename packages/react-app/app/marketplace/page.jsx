@@ -21,7 +21,7 @@ export default function MarketplacePage({ walletConnected }) {
 
   return (
     <section className="py-12 px-4 bg-white rounded-xl shadow-lg my-8 mx-auto max-w-6xl">
-      <h3 className="text-4xl font-bold text-center text-green-700 mb-8">Decentralized Marketplace</h3> [cite: 4]
+      <h3 className="text-4xl font-bold text-center text-green-700 mb-8">Decentralized Marketplace</h3> 
       {walletConnected ? (
         <div className="text-center">
           <p className="text-lg text-gray-600 mb-6">

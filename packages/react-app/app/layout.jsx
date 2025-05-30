@@ -1,13 +1,10 @@
-// app/layout.jsx
-// This is a client component as it manages state (wallet connection)
+
 'use client';
 
 import React, { useState } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import '../styles/globals.css'; // Import your global CSS for Tailwind and custom styles
-
-// REMOVE THE METADATA EXPORT FROM HERE
+import '../styles/globals.css'; 
 
 export default function RootLayout({ children }) {
   const [walletConnected, setWalletConnected] = useState(false);

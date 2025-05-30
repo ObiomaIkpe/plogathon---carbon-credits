@@ -1,6 +1,4 @@
-'@import "tailwindcss/preflight"
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Custom scrollbar for a cleaner look */
 ::-webkit-scrollbar {
