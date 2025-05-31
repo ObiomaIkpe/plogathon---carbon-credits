@@ -108,13 +108,13 @@ To deploy the contracts, use Hardhat Ignition as follows:
 **Alfajores Testnet:**
 
 ```bash
-npx hardhat ignition deploy ./ignition/modules/Lock.ts --network alfajores
+npx hardhat ignition deploy ./ignition/modules/CarbonCreditSystem.js --network alfajores
 ```
 
 **Celo Mainnet:**
 
 ```bash
-npx hardhat ignition deploy ./ignition/modules/Lock.ts --network celo
+npx hardhat ignition deploy ./ignition/modules/CarbonCreditSystem.js--network celo
 ```
 
 Deployment outputs contract addresses for `RoleManager`, `CarbonCreditNFT`, `CarbonCreditToken`, `CarbonCreditMarketplace`, and `CarbonCreditConverter`.
