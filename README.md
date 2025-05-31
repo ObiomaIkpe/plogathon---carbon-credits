@@ -1,4 +1,5 @@
-### to run code locally
-- cd packages/react-app
-- npm install
-- npm run dev
+### link to website
+
+https://plogathon-carbon-credits.onrender.com/
+
+`we used free hosting so it might be a bit slow.`
