@@ -1,11 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.28;
+pragma solidity ^0.8.28;
 
-import "@openzeppelin/contracts@5.0.2/token/ERC721/extensions/ERC721URIStorage.sol";
-import "@openzeppelin/contracts@5.0.2/access/AccessControl.sol";
+import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
+import "@openzeppelin/contracts/access/AccessControl.sol";
 
 /// @title CarbonCreditNFT
-/// @author Therock Ani
 /// @notice Manages unique carbon credits as ERC-721 NFTs, with metadata and CO2 tracking.
 /// @dev Extends ERC721URIStorage for token URI storage and AccessControl for role-based permissions.
 contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
@@ -14,6 +13,9 @@ contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
 
     /// @notice Counter for generating unique token IDs.
     uint256 public tokenIdCounter;
+
+    /// @notice Address of the CarbonCreditMarketplace contract.
+    address public marketplaceAddress;
 
     /// @notice Maps token ID to CO2 amount (in tons) for each NFT.
     mapping(uint256 => uint256) public carbonAmount;
@@ -26,6 +28,9 @@ contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
     error NotOwnerOrApproved();
     /// @notice Custom error for invalid CO2 amount (zero).
     error InvalidCarbonAmount();
+    /// @notice Custom error for invalid marketplace address.
+    error InvalidMarketplaceAddress();
+     
 
     /// @notice Emitted when a new carbon credit NFT is minted.
     /// @param tokenId The ID of the minted NFT.
@@ -39,16 +44,35 @@ contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
     /// @param owner The address of the owner who burned the NFT.
     event CreditBurned(uint256 indexed tokenId, address indexed owner);
 
-    /// @notice Initializes the contract with default admin and minter roles.
-    /// @dev Sets the contract deployer as the default admin and initial minter.
-    constructor() ERC721("CarbonCreditNFT", "CCNFT") {
+    /// @notice Emitted when the marketplace address is updated.
+    /// @param newMarketplaceAddress The new marketplace address.
+    event MarketplaceAddressUpdated(address indexed newMarketplaceAddress);
+
+    /// @notice Initializes the contract with default admin, minter roles, RoleManager, and marketplace integration.
+    /// @dev Sets the deployer as the default admin and minter, grants RoleManager admin role, and sets initial marketplace address.
+    /// @param roleManager The address of the RoleManager contract.
+    constructor(address roleManager) ERC721("CarbonCreditNFT", "CCNFT") {
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _grantRole(MINTER_ROLE, msg.sender);
+        if (roleManager != address(0)) {
+            _grantRole(DEFAULT_ADMIN_ROLE, roleManager);
+        }
+    
+        marketplaceAddress = address(0);
         tokenIdCounter = 0;
     }
 
+    /// @notice Updates the marketplace contract address.
+    /// @dev Only callable by accounts with DEFAULT_ADMIN_ROLE.
+    /// @param newMarketplaceAddress The new address of the CarbonCreditMarketplace contract.
+    function updateMarketplaceAddress(address newMarketplaceAddress) public onlyRole(DEFAULT_ADMIN_ROLE) {
+        if (newMarketplaceAddress == address(0)) revert InvalidMarketplaceAddress();
+        marketplaceAddress = newMarketplaceAddress;
+        emit MarketplaceAddressUpdated(newMarketplaceAddress);
+    }
+
     /// @notice Mints a new carbon credit NFT with specified CO2 amount and metadata.
-    /// @dev Only callable by accounts with MINTER_ROLE. Increments tokenIdCounter.
+    /// @dev Only callable by accounts with MINTER_ROLE. Approves the marketplace contract for the NFT.
     /// @param to The address to receive the NFT.
     /// @param carbonTons The CO2 amount (in tons) represented by the NFT.
     /// @param tokenURI The URI for metadata (e.g., IPFS link to project details).
@@ -61,6 +85,12 @@ contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
         _mint(to, newTokenId);
         _setTokenURI(newTokenId, tokenURI);
         carbonAmount[newTokenId] = carbonTons;
+
+        // Approve the marketplace contract to transfer this NFT
+        if (marketplaceAddress != address(0)) {
+            approve(marketplaceAddress, newTokenId);
+        }
+
         tokenIdCounter++;
         emit CreditMinted(newTokenId, to, carbonTons, tokenURI);
         return newTokenId;
@@ -73,22 +103,6 @@ contract CarbonCreditNFT is ERC721URIStorage, AccessControl {
         if (!_isAuthorized(ownerOf(tokenId), msg.sender, tokenId)) revert NotOwnerOrApproved();
         _burn(tokenId);
         emit CreditBurned(tokenId, msg.sender);
-    }
-
-    /// @notice Grants the MINTER_ROLE to an account.
-    /// @dev Only callable by accounts with DEFAULT_ADMIN_ROLE.
-    /// @param account The address to grant the minter role.
-    function grantMinterRole(address account) public {
-        if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender)) revert NotAdmin();
-        _grantRole(MINTER_ROLE, account);
-    }
-
-    /// @notice Revokes the MINTER_ROLE from an account.
-    /// @dev Only callable by accounts with DEFAULT_ADMIN_ROLE.
-    /// @param account The address to revoke the minter role from.
-    function revokeMinterRole(address account) public {
-        if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender)) revert NotAdmin();
-        _revokeRole(MINTER_ROLE, account);
     }
 
     /// @notice Overrides supportsInterface to handle ERC721URIStorage and AccessControl interfaces.
